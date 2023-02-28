@@ -1,5 +1,8 @@
 package NNPIA.cv01;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 /*
@@ -15,12 +18,16 @@ import org.springframework.web.bind.annotation.*;
 * YAML uses indentation to define structured data. So each block in the YAML is differentiated by the number of white spaces.
 * */
 
+@RequiredArgsConstructor
+@FieldDefaults(makeFinal = true,level= AccessLevel.PRIVATE)
 @RestController
 public class HelloController {
 
+    AppUserDAO appUserDAO;
+
     @GetMapping("")
     public String helloWorld() {
-        return "Hello world from Spring Boot application.";
+        return appUserDAO.getUsersByActivity(false).toString();
     }
 
     @GetMapping(value={"/path/{someID}"})
