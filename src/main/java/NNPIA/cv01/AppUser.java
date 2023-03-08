@@ -3,11 +3,14 @@ package NNPIA.cv01;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.sql.Date;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,12 +21,18 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
+@DynamicInsert
+@DynamicUpdate
 @Table(name="AppUser")
 public class AppUser {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column
+    @NotNull
+    @NotEmpty
+    @Max(255)
     private String username;
     @Column
     private String password;
