@@ -1,25 +1,15 @@
 package NNPIA.cv01;
 
-import NNPIA.cv01.security.AuthenticationRequest;
-import NNPIA.cv01.security.AuthenticationResponse;
-import NNPIA.cv01.security.JwtUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-
-
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true,level= AccessLevel.PRIVATE)
@@ -27,30 +17,6 @@ import javax.validation.Valid;
 public class AppUserController {
 
     AppUserDAO appUserDAO;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-        } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
-        }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
-    }
 
     @GetMapping(value={"/app-user/{id}"})
     public String getUserById(@PathVariable(value="id") final int id) {
@@ -80,5 +46,11 @@ public class AppUserController {
 
     public AppUser findByUsername(String username) {
         return appUserDAO.getUserByUsername(username);
+    }
+
+    @QueryMapping
+    @GetMapping(value="/graphql")
+    public List<AppUser> getUsers(){
+        return appUserDAO.findAll();
     }
 }

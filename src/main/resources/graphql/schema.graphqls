@@ -1,0 +1,7 @@
+type Query{
+    appUsers: [AppUser]
+}
+type AppUser{
+    id:ID!
+    username:String
+}
